@@ -4,6 +4,7 @@ import 'Cards.dart';
 
 var first_player;
 var currentPlayer;
+bool isOver = false;
 List distributedCard = [];
 List<Player> players = [];
 List<Player> remainingPlayers = [];
@@ -17,6 +18,7 @@ class Player {
   List playerPlayedCards = [];
   var previous;
   var next;
+  var entry;
 
   Player(id, ownCards, hasHand, isPlaying, playerCards) {
     this.id = id;
@@ -30,6 +32,42 @@ class Player {
     for (var i = 0; i < 5; i++) {
       var playerCard = getCard(playerCards);
       distributedCard.add(playerCard);
+    }
+  }
+
+  void Play() {
+    print("Hello player ${id}");
+    print("Choix de carte");
+    ShowCards();
+    entry = stdin.readLineSync();
+    switch (entry) {
+      case "1":
+        playerPlayedCards.add(this.playerCards[1]);
+        this.playerCards.removeAt(1);
+        this.playerCards.removeAt(0);
+        break;
+      case "2":
+        playerPlayedCards.add(this.playerCards[3]);
+        this.playerCards.removeAt(3);
+        this.playerCards.removeAt(2);
+        break;
+      case "3":
+        playerPlayedCards.add(this.playerCards[5]);
+        this.playerCards.removeAt(5);
+        this.playerCards.removeAt(4);
+        break;
+      case "4":
+        playerPlayedCards.add(this.playerCards[7]);
+        this.playerCards.removeAt(7);
+        this.playerCards.removeAt(6);
+        break;
+      case "5":
+        playerPlayedCards.add(this.playerCards[9]);
+        this.playerCards.removeAt(9);
+        this.playerCards.removeAt(8);
+        break;
+      default:
+        break;
     }
   }
 }
@@ -73,9 +111,26 @@ void SwitchPlayers() {
 }
 
 void ShowCards() {
-  print(currentPlayer.playerCards);
-  print(currentPlayer.next.playerCards);
-  print(currentPlayer.previous.playerCards);
+  var k = 1;
+  for (var i = 0; i < currentPlayer.playerCards.length; i += 2) {
+    print(
+        "${k}-${currentPlayer.playerCards[i]} ${currentPlayer.playerCards[i + 1]}");
+    k++;
+  }
 }
 
-void Play() {}
+void Game() {
+  currentPlayer = first_player;
+  while (!isOver) {
+    for (var i = 0; i < players.length; i++) {
+      currentPlayer.Play();
+      if (players[0].playerPlayedCards.length == 5 &&
+          players[1].playerPlayedCards.length == 5 &&
+          players[2].playerPlayedCards.length == 5 &&
+          players[3].playerPlayedCards.length == 5) {
+        isOver = true;
+      }
+      currentPlayer = currentPlayer.next;
+    }
+  }
+}
