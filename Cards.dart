@@ -25,12 +25,6 @@ class Card {
 
 enum CardType { COEUR, TREFLE, PIQUE, ETOILE }
 
-List<String> cardsTypes = ['Coeur', 'Trefle', 'Pique', 'Etoile'];
-List<int> cardsNumbers = [3, 4, 5, 6, 7, 8, 9, 10];
-Map<int, List<String>> storage = {};
-var type = null;
-var number = null;
-
 List<Card> generateCard(List<CardType> cardType,
     {int begin = 3, int end = 10}) {
   List<Card> cards = [];
