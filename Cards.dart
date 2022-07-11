@@ -1,31 +1,43 @@
-import 'dart:math';
+class Card {
+  Card(this.type, this.number);
+  CardType type;
+  int number;
+
+  @override
+  String toString() {
+    // TODO: implement toString
+    return {"type": getType(type), "number": number}.toString();
+  }
+
+  getType(CardType t) {
+    switch (t) {
+      case CardType.COEUR:
+        return "Coeur";
+      case CardType.ETOILE:
+        return "Etoile";
+      case CardType.TREFLE:
+        return "Trefle";
+      default:
+        return "Pique";
+    }
+  }
+}
+
+enum CardType { COEUR, TREFLE, PIQUE, ETOILE }
 
 List<String> cardsTypes = ['Coeur', 'Trefle', 'Pique', 'Etoile'];
 List<int> cardsNumbers = [3, 4, 5, 6, 7, 8, 9, 10];
+Map<int, List<String>> storage = {};
 var type = null;
 var number = null;
 
-List getCard(List distributedCards) {
-  type = cardsTypes[Random().nextInt(4)];
-  number = cardsNumbers[Random().nextInt(8)];
-  do {
-    type = cardsTypes[Random().nextInt(4)];
-    number = cardsNumbers[Random().nextInt(8)];
-  } while (Exist(distributedCards));
-
-  distributedCards.add(type);
-  distributedCards.add(number);
-  return distributedCards;
-}
-
-bool Exist(List distributedCards) {
-  bool exist = false;
-
-  for (var i = 0; i < distributedCards.length; i++) {
-    if (distributedCards[i] == type && distributedCards[i + 1] == number) {
-      exist = true;
-      break;
-    }
+List<Card> generateCard(List<CardType> cardType,
+    {int begin = 3, int end = 10}) {
+  List<Card> cards = [];
+  for (var i = begin; i <= end; i++) {
+    cardType.forEach((type) {
+      cards.add(Card(type, i));
+    });
   }
-  return exist;
+  return cards;
 }

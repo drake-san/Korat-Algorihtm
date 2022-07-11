@@ -5,36 +5,30 @@ import 'Cards.dart';
 var first_player;
 var currentPlayer;
 bool isOver = false;
-List distributedCard = [];
+List<Card> cards = generateCard(
+    [CardType.COEUR, CardType.ETOILE, CardType.PIQUE, CardType.TREFLE]);
 List<Player> players = [];
 List<Player> remainingPlayers = [];
-List playedCards = [];
 
 class Player {
   int id = 0;
   List ownCards = [];
-  bool hasHand = false;
-  bool isPlaying = false;
-  List playerCards = [];
-  List playerPlayedCards = [];
-  List playerPlayedTypeCards = [];
+  List<Card> playerPlayedCards = [];
+  List<Card> playerCard = [];
   var previous;
   var next;
   var entry;
-  var won = false;
 
-  Player(id, ownCards, hasHand, isPlaying, playerCards) {
+  Player(id, ownCards) {
     this.id = id;
     this.ownCards = ownCards;
-    this.hasHand = hasHand;
-    this.isPlaying = isPlaying;
-    this.playerCards = playerCards;
   }
 
-  void GiveCards() {
+  void receiveCards() {
     for (var i = 0; i < 5; i++) {
-      var playerCard = getCard(playerCards);
-      distributedCard.add(playerCard);
+      int theCard = Random().nextInt(cards.length);
+      playerCard.add(cards[theCard]);
+      cards.removeAt(theCard);
     }
   }
 
@@ -45,54 +39,47 @@ class Player {
     entry = stdin.readLineSync();
     switch (entry) {
       case "1":
-        playerPlayedCards.add(this.playerCards[1]);
-        playerPlayedTypeCards.add(this.playerCards[0]);
+        playerPlayedCards.add(playerCard[0]);
         ownCards.add(1);
-        this.playerCards.removeAt(1);
-        this.playerCards.removeAt(0);
+        playerCard.removeAt(0);
         break;
       case "2":
-        playerPlayedCards.add(this.playerCards[3]);
-        playerPlayedTypeCards.add(this.playerCards[2]);
+        playerPlayedCards.add(playerCard[1]);
         ownCards.add(1);
-        this.playerCards.removeAt(3);
-        this.playerCards.removeAt(2);
+        playerCard.removeAt(1);
         break;
       case "3":
-        playerPlayedCards.add(this.playerCards[5]);
-        playerPlayedTypeCards.add(this.playerCards[4]);
+        playerPlayedCards.add(playerCard[2]);
         ownCards.add(1);
-        this.playerCards.removeAt(5);
-        this.playerCards.removeAt(4);
+        playerCard.removeAt(2);
         break;
       case "4":
-        playerPlayedCards.add(this.playerCards[7]);
-        playerPlayedTypeCards.add(this.playerCards[6]);
+        playerPlayedCards.add(playerCard[3]);
         ownCards.add(1);
-        this.playerCards.removeAt(7);
-        this.playerCards.removeAt(6);
+        playerCard.removeAt(3);
         break;
       case "5":
-        playerPlayedCards.add(this.playerCards[9]);
-        playerPlayedTypeCards.add(this.playerCards[8]);
+        playerPlayedCards.add(playerCard[4]);
         ownCards.add(1);
-        this.playerCards.removeAt(9);
-        this.playerCards.removeAt(8);
+        playerCard.removeAt(4);
         break;
       default:
         break;
     }
     print(
-        "Le joueur ${id} a joue le ${playerPlayedCards[0]} ${playerPlayedTypeCards[0]}");
+        "Le joueur ${id} a joue le ${playerPlayedCards[0].getType(playerPlayedCards[0].type)} ${playerPlayedCards[0].number}");
   }
 }
 
 void CreatePlayers() {
   for (int i = 0; i < 4; i++) {
-    players.add(new Player((i + 1), [], false, false, []));
+    players.add(new Player(
+      (i + 1),
+      [],
+    ));
   }
   for (var v = 0; v < 4; v++) {
-    players[v].GiveCards();
+    players[v].receiveCards();
   }
 }
 
@@ -100,8 +87,6 @@ void SwitchPlayers() {
   int index = Random().nextInt(4);
 
   first_player = players[index];
-  first_player.hasHand = true;
-  first_player.isPlaying = true;
   currentPlayer = first_player;
   remainingPlayers = players;
   remainingPlayers.remove(players[index]);
@@ -127,9 +112,9 @@ void SwitchPlayers() {
 
 void ShowCards() {
   var k = 1;
-  for (var i = 0; i < currentPlayer.playerCards.length; i += 2) {
+  for (var i = 0; i < currentPlayer.playerCard.length; i++) {
     print(
-        "${k}-${currentPlayer.playerCards[i]} ${currentPlayer.playerCards[i + 1]}");
+        "${k}-${currentPlayer.playerCard[i].getType(currentPlayer.playerCard[i].type)} ${currentPlayer.playerCard[i].number}");
     k++;
   }
 }
@@ -140,20 +125,13 @@ void Game() {
     for (var i = 0; i < players.length; i++) {
       currentPlayer.Play();
       currentPlayer = currentPlayer.next;
-      playedCards.add(players[i].playerPlayedCards);
-      if (players[0].ownCards.length == 5 &&
-          players[1].ownCards.length == 5 &&
-          players[2].ownCards.length == 5 &&
-          players[3].ownCards.length == 5) {
-        print("Le joueur ${first_player.id} a gagne");
-        isOver = true;
-      }
+      //playedCards.add(players[i].playerPlayedCards);
     }
     for (var i = 0; i < 4; i++) {
-      if (first_player.playerPlayedTypeCards[0] ==
-              currentPlayer.playerPlayedTypeCards[0] &&
-          first_player.playerPlayedCards[0] <
-              currentPlayer.playerPlayedCards[0]) {
+      if (first_player.playerPlayedCards[0].type ==
+              currentPlayer.playerPlayedCards[0].type &&
+          first_player.playerPlayedCards[0].number <
+              currentPlayer.playerPlayedCards[0].number) {
         first_player = currentPlayer;
       }
       currentPlayer = currentPlayer.next;
@@ -161,7 +139,15 @@ void Game() {
     currentPlayer = first_player;
     for (var i = 0; i < players.length; i++) {
       players[i].playerPlayedCards.removeAt(0);
-      players[i].playerPlayedTypeCards.removeAt(0);
     }
+    if (players[0].ownCards.length == 5 &&
+        players[1].ownCards.length == 5 &&
+        players[2].ownCards.length == 5 &&
+        players[3].ownCards.length == 5) {
+      print("Le joueur ${first_player.id} a gagne");
+      isOver = true;
+      break;
+    }
+    print("Le joueur ${currentPlayer.id} a la main");
   }
 }
