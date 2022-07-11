@@ -33,10 +33,11 @@ class Player {
   }
 
   void Play() {
-    print("Tour du joueur ${id}");
+    print("Tour du joueur ${id}\n");
     print("Choix de carte");
     ShowCards();
     entry = stdin.readLineSync();
+    print("\n");
     switch (entry) {
       case "1":
         playerPlayedCards.add(playerCard[0]);
@@ -67,7 +68,7 @@ class Player {
         break;
     }
     print(
-        "Le joueur ${id} a joue le ${playerPlayedCards[0].getType(playerPlayedCards[0].type)} ${playerPlayedCards[0].number}");
+        "Le joueur ${id} a joue le ${playerPlayedCards[0].getType(playerPlayedCards[0].type)} ${playerPlayedCards[0].number}\n");
   }
 }
 
@@ -125,7 +126,6 @@ void Game() {
     for (var i = 0; i < players.length; i++) {
       currentPlayer.Play();
       currentPlayer = currentPlayer.next;
-      //playedCards.add(players[i].playerPlayedCards);
     }
     for (var i = 0; i < 4; i++) {
       if (first_player.playerPlayedCards[0].type ==
@@ -148,6 +148,6 @@ void Game() {
       isOver = true;
       break;
     }
-    print("Le joueur ${currentPlayer.id} a la main");
+    print("Le joueur ${currentPlayer.id} a la main\n");
   }
 }
